@@ -1,0 +1,24 @@
+---
+- name: Download zsh installer
+  get_url:
+    url: https://repo.cloudlinux.com/kernelcare/kernelcare_install.sh
+    dest: /tmp/kernelcare_install.sh
+    mode: 777
+
+- name: Execute the kernelcare_install.sh
+  shell: /tmp/kernelcare_install.sh
+
+- name: Remove the kernelcare_install.sh
+  file:
+    path: /tmp/kernelcare_install.sh
+    state: absent
+
+- name: Register License Key
+  command: kcarectl --register "{{ kernelcare_key }}"
+  when: kernelcare_key != ""
+
+- name: Start + Start-on-boot
+  service:
+    name="kcare"
+    state="started"
+    enabled="yes"
